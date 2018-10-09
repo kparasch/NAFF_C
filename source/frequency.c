@@ -5,6 +5,11 @@ double minus_magnitude_fourier_integral(double frequency, const merit_args* S)
     return -cabs(inner_product(S->signal, 1., frequency, S->window, S->N));
 }
 
+double minus_magnitude_fourier_integral_complex(double _Complex frequency, const merit_args* S)
+{
+    return -cabs(inner_product_complex(S->signal, 1., frequency, S->window, S->N));
+}
+
 double get_f1(double _Complex* signal, size_t N, double order, double fft_estimate)
 {
     merit_args *margs = (merit_args*)malloc(sizeof(merit_args));
@@ -26,6 +31,31 @@ double get_f1(double _Complex* signal, size_t N, double order, double fft_estima
     return naff_estimate;
 }
 
+void get_f_tau(double _Complex* signal, size_t N, double order, double *tune, double *tau)
+{
+    merit_args *margs = (merit_args*)malloc(sizeof(merit_args));
+    margs->N = N;
+    margs->window = (double _Complex*)malloc(N*sizeof(double _Complex));
+    margs->signal = signal;
+    hann_harm_window(margs->window, N, order);
+    strip_DC(signal, N);
+
+    double (*merit_function)(double _Complex,const merit_args*) = minus_magnitude_fourier_integral_complex;
+
+    double step = 1./N;
+    double fft_estimate = max_fftw_frequency(margs->signal, N);
+    double _Complex x1 = fft_estimate - step;
+    double _Complex x2 = fft_estimate + step;
+    double _Complex x3 = fft_estimate + I;
+    double _Complex naff_estimate = simplex_minimize( merit_function, x1, x2, x3, margs ); 
+    
+    free(margs->window);
+    free(margs);
+    //return naff_estimate;
+    *tune = creal(naff_estimate);
+    *tau = (cimag(naff_estimate));
+    return;
+}
 
 void get_f_neg(double _Complex* signal, size_t N, double order, double* frequencies, double _Complex* amplitudes, double _Complex* negative_amplitudes, size_t n_freqs)
 {

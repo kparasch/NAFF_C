@@ -38,6 +38,16 @@ def get_tune(x):
     #print tune
     return tune.value
 
+def get_tune_tau(x):
+    signal = complex_c_pointer(x)
+    N = ctypes.c_int(len(x))
+    hanning_order = ctypes.c_double(2.)
+    tune = ctypes.c_double(0.)
+    tau = ctypes.c_double(0.)
+    NAFFlib.get_f_tau(signal,N,hanning_order,ctypes.byref(tune), ctypes.byref(tau))
+    #print tune
+    return tune.value, tau.value
+
 def get_tune2(x):
     signal = complex_c_pointer(x)
     N = ctypes.c_int(len(x))
@@ -65,6 +75,9 @@ def get_tunes(x, n):
     pos_amps = np.array([amps[i].to_complex() for i in range(len(amps))])
     neg_amps = np.array([namps[i].to_complex() for i in range(len(namps))])
     return tunes, pos_amps, neg_amps 
+
+def simplex_test():
+    NAFFlib.test_simplex()
 
 #a = ctypes.c_int(3)
 #data = NAFFlib_struct(5,3,"h")

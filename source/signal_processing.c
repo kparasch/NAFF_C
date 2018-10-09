@@ -9,6 +9,17 @@ double _Complex inner_product(const double _Complex* signal, double amplitude, d
     return (amplitude*result)/N;
 }
 
+double _Complex inner_product_complex(const double _Complex* signal, double amplitude, double _Complex frequency, const double _Complex* window, size_t N)
+{
+    double omega = (2*pi)*creal(frequency);
+    double lambda = fabs(cimag(frequency));
+    double _Complex result = 0.;
+    for( size_t i = N; i--; )
+        result += (signal[i]*cexp(-I*omega*i))*window[i]*cexp(-lambda*i);
+    return (amplitude*result)/N;
+}
+
+
 void strip_DC(double _Complex* signal, size_t N)
 {
     double _Complex mean = 0.;

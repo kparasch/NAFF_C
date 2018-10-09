@@ -4,7 +4,7 @@ incdir = include
 
 #headers = $(wildcard $(incdir)/*.h)
 #objects = $(subst $(incdir), $(objdir), $(headers:.h=.o))
-objects = $(objdir)/windows.o $(objdir)/signal_processing.o $(objdir)/brent.o $(objdir)/frequency.o $(objdir)/fft.o 
+objects = $(objdir)/windows.o $(objdir)/signal_processing.o $(objdir)/brent.o $(objdir)/frequency.o $(objdir)/fft.o  $(objdir)/simplex.o 
 
 
 cc = gcc
@@ -36,6 +36,9 @@ $(objdir)/frequency.o: $(srcdir)/frequency.c $(incdir)/frequency.h
 	@$(cc) -c $(cflags) $< -o $@ 
 
 $(objdir)/fft.o: $(srcdir)/fft.c $(incdir)/fft.h 
+	@$(cc) -c $(cflags) $< -o $@ 
+
+$(objdir)/simplex.o: $(srcdir)/simplex.c $(incdir)/simplex.h 
 	@$(cc) -c $(cflags) $< -o $@ 
 
 clean:
